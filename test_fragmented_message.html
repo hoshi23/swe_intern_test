@@ -2,10 +2,10 @@
   function SEND(ws, command) {
     ws.send(JSON.stringify(command));
     return new Promise(resolve => {
-      ws.on = ('message', function(text) {
-        const response = JSON.parse(text);
+      ws.addEventListener('message', function(text) {
+        const response = text;
         if (response.id === command.id) {
-          ws.removeListener('message', arguments.callee);
+          ws.removeEventListener('message', arguments.callee);
           resolve(response);
         }
       });
@@ -15,26 +15,27 @@
     const ws = new WebSocket('ws://127.0.0.1:9222/devtools/browser/f7aa8f03-1201-4a28-9545-51c8495be3f1')
     console.log('connected!');
 
-    function SendsCommands() {
-      const targetsResponse = SEND(ws, {
-        id: 1000,
-        method: 'Target.getTargets',
-    });
-    console.log(targetsResponse.result.targetInfos);
-    const pageTarget = targetsResponse.result.targetInfos.find(info => info.type === 'page');
 
+    async function SendsCommands() {
+      const targetsResponse = await SEND(ws, {
+          id: 1000,
+          method: 'Target.getTargets',
+      });
+      console.log('SendsCommands');
+      const pageTarget = targetsResponse.result.targetInfos.find(info => info.type === 'page');
 
-    // Attach to the page target.
-    const sessionId = (SEND(ws, {
-        id: 1001,
-        method: 'Target.attachToTarget',
-        params: {
-        targetId: pageTarget.targetId,
-        flatten: true,
-        },
-    })).result.sessionId;
+      // Attach to the page target.
+      const sessionId = (await SEND(ws, {
+          id: 1001,
+          method: 'Target.attachToTarget',
+          params: {
+          targetId: pageTarget.targetId,
+          flatten: true,
+          },
+      })).result.sessionId;
+      console.log('Get sessionId');
 
-      ws.send(JSON.stringify({
+      await ws.send(JSON.stringify({
           id: sessionId,
           method: 'DOM.setAttributeValue',
           params: {
