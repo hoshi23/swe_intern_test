@@ -13,7 +13,7 @@
     });
   }
   (async () => {
-    const ws = new WebSocket('ws://127.0.0.1:9222/devtools/browser/f7aa8f03-1201-4a28-9545-51c8495be3f1')
+    const ws = new WebSocket('ws://127.0.0.1:9222/devtools/browser/f7aa8f03-1201-4a28-9545-51c8495be3f1');
     console.log('connected!');
 
 
@@ -53,6 +53,16 @@
           },
       })).result.nodeId;
       console.log('imgId: ',imgId);
+
+      const getAttribute = (await SEND(ws, {
+          sessionId: sessionId,
+          id: 1005,
+          method: 'DOM.getAttributes',
+          params: {
+            nodeId: imgId,
+          },
+      })).nodeId;
+      console.log('getAttribute: ',getAttribute);
 
       await ws.send(JSON.stringify({
           sessionId: sessionId,
