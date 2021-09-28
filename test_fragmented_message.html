@@ -3,11 +3,8 @@
     ws.send(JSON.stringify(command));
     return new Promise(resolve => {
       ws.addEventListener('message', function(text) {
-        const response = JSON.parse(JSON.stringify(text.data));
-        console.log('recieve response')
-        console.log(response.id, ': ', command.id)
+        const response = JSON.parse(text.data);
         if (response.id === command.id) {
-          console.log('ok id');
           ws.removeEventListener('message', arguments.callee);
           resolve(response);
         }
@@ -39,7 +36,7 @@
       console.log('Get sessionId');
 
       await ws.send(JSON.stringify({
-          id: sessionId,
+          sessionId: sessionId,
           method: 'DOM.setAttributeValue',
           params: {
           NodeId: 2,
