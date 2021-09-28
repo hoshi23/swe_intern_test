@@ -3,8 +3,11 @@
     ws.send(JSON.stringify(command));
     return new Promise(resolve => {
       ws.addEventListener('message', function(text) {
-        const response = text;
+        const response = JSON.parse(JSON.stringify(text.data));
+        console.log('recieve response')
+        console.log(response.id, ': ', command.id)
         if (response.id === command.id) {
+          console.log('ok id');
           ws.removeEventListener('message', arguments.callee);
           resolve(response);
         }
