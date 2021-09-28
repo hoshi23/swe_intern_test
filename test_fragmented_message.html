@@ -1,4 +1,4 @@
-<img src="" height="200" alt="No image ...">
+<img src="" height="200" alt="No image ..." name="img">
 <script>
   function SEND(ws, command) {
     ws.send(JSON.stringify(command));
@@ -59,7 +59,7 @@
           id: 1004,
           method: 'DOM.setAttributeValue',
           params: {
-          NodeId: documentId,
+          NodeId: imgId,
           Name: 'img',
           Value: 'data:image/gif;base64,R0lGODlhAQABAPAAAP8AAAAAACH5BAQAAAAALAAAAAABAAEAAAICRAEAOw==',
           },
