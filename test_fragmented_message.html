@@ -1,3 +1,4 @@
+<img src="" height="200" alt="No image ...">
 <script>
   function SEND(ws, command) {
     ws.send(JSON.stringify(command));
@@ -35,11 +36,30 @@
       })).result.sessionId;
       console.log('Get sessionId');
 
+      const documentId = (await SEND(ws, {
+          sessionId: sessionId,
+          id: 1002,
+          method: 'DOM.getDocument',
+      })).result.root.nodeId;
+      console.log('documentId: ',documentId);
+
+      const imgId = (await SEND(ws, {
+          sessionId: sessionId,
+          id: 1003,
+          method: 'DOM.querySelector',
+          params: {
+            nodeId: documentId,
+            selector: 'img',
+          },
+      })).result.nodeId;
+      console.log('imgId: ',imgId);
+
       await ws.send(JSON.stringify({
           sessionId: sessionId,
+          id: 1004,
           method: 'DOM.setAttributeValue',
           params: {
-          NodeId: 2,
+          NodeId: documentId,
           Name: 'img',
           Value: 'data:image/gif;base64,R0lGODlhAQABAPAAAP8AAAAAACH5BAQAAAAALAAAAAABAAEAAAICRAEAOw==',
           },
