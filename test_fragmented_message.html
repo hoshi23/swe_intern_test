@@ -1,22 +1,52 @@
 <script>
+  function SEND(ws, command) {
+    ws.send(JSON.stringify(command));
+    return new Promise(resolve => {
+      ws.on = ('message', function(text) {
+        const response = JSON.parse(text);
+        if (response.id === command.id) {
+          ws.removeListener('message', arguments.callee);
+          resolve(response);
+        }
+      });
+    });
+  }
   (async () => {
-    const ws = new WebSocket('ws://127.0.0.1:45449/devtools/browser/')
-    await new Promise(resolve => ws.once('open', resolve));
+    const ws = new WebSocket('ws://127.0.0.1:9222/devtools/browser/f7aa8f03-1201-4a28-9545-51c8495be3f1')
     console.log('connected!');
 
     function SendsCommands() {
-        ws.send(JSON.stringify({
-            id: sessionId,
-            method: 'DOM.setAttributeValue',
-            params: {
-            NodeId: 2,
-            Name: 'img',
-            Value: 'data:image/gif;base64,R0lGODlhAQABAPAAAP8AAAAAACH5BAQAAAAALAAAAAABAAEAAAICRAEAOw==',
-            },
-        }));
-        console.log("SendsCommands is OK.");
+      const targetsResponse = SEND(ws, {
+        id: 1000,
+        method: 'Target.getTargets',
+    });
+    console.log(targetsResponse.result.targetInfos);
+    const pageTarget = targetsResponse.result.targetInfos.find(info => info.type === 'page');
+
+
+    // Attach to the page target.
+    const sessionId = (SEND(ws, {
+        id: 1001,
+        method: 'Target.attachToTarget',
+        params: {
+        targetId: pageTarget.targetId,
+        flatten: true,
+        },
+    })).result.sessionId;
+
+      ws.send(JSON.stringify({
+          id: sessionId,
+          method: 'DOM.setAttributeValue',
+          params: {
+          NodeId: 2,
+          Name: 'img',
+          Value: 'data:image/gif;base64,R0lGODlhAQABAPAAAP8AAAAAACH5BAQAAAAALAAAAAABAAEAAAICRAEAOw==',
+          },
+      }));
+      console.log("SendsCommands is OK.");
     }
     ws.onopen = SendsCommands;
+    ws.onmessage = event => console.log(event.data);
   })();
 
 </script>
