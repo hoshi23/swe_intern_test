@@ -1,4 +1,4 @@
-<img src="" height="200" alt="No image ..." name="img">
+<img src="" height="200" alt="No image ...">
 <script>
   function SEND(ws, command) {
     ws.send(JSON.stringify(command));
@@ -54,24 +54,14 @@
       })).result.nodeId;
       console.log('imgId: ',imgId);
 
-      const getAttribute = (await SEND(ws, {
-          sessionId: sessionId,
-          id: 1005,
-          method: 'DOM.getAttributes',
-          params: {
-            nodeId: imgId,
-          },
-      })).nodeId;
-      console.log('getAttribute: ',getAttribute);
-
       await ws.send(JSON.stringify({
           sessionId: sessionId,
           id: 1004,
           method: 'DOM.setAttributeValue',
           params: {
-          NodeId: imgId,
-          Name: 'img',
-          Value: 'data:image/gif;base64,R0lGODlhAQABAPAAAP8AAAAAACH5BAQAAAAALAAAAAABAAEAAAICRAEAOw==',
+            nodeId: imgId,
+            name: 'src',
+            value: 'data:image/gif;base64,R0lGODlhAQABAPAAAP8AAAAAACH5BAQAAAAALAAAAAABAAEAAAICRAEAOw==',
           },
       }));
       console.log("SendsCommands is OK.");
