@@ -13,7 +13,8 @@
     });
   }
   (async () => {
-    const ws = new WebSocket('ws://127.0.0.1:9222/devtools/browser/f7aa8f03-1201-4a28-9545-51c8495be3f1');
+    // Please rewrite the URL according to your browser's.
+    const ws = new WebSocket('ws://127.0.0.1:9222/devtools/browser/5dccdda8-d321-4ce5-b822-e3124da7a73f');
     console.log('connected!');
 
 
@@ -61,6 +62,7 @@
           params: {
             nodeId: imgId,
             name: 'src',
+            // Change this value to any dataURL.
             value: 'data:image/gif;base64,R0lGODlhAQABAPAAAP8AAAAAACH5BAQAAAAALAAAAAABAAEAAAICRAEAOw==',
           },
       }));
