@@ -15,8 +15,8 @@ These files are used to confirm whethere the DevTools' WebSocket can receive all
 
 1. Open your browser by using port number `9222`.
 2. You can get the URL like `ws://127.0.0.1:9222/devtools/browser/...` and copy it.
-3. Replace the URL inside `new WebSocket()` of L16 in [test_fragmented_message.html](https://github.com/shihonoda/swe_intern_test/blob/main/test_fragmented_message.html) to it you got.
-4. Replace `value` of the method `'DOM.setAttributeValue'`(L64) to the dataURL you got.
+3. Replace the URL inside `new WebSocket()` (L16 in [test_fragmented_message.html](https://github.com/shihonoda/swe_intern_test/blob/main/test_fragmented_message.html)) to it you got.
+4. Replace `value` of the method `'DOM.setAttributeValue'`(L64[test_fragmented_message.html](https://github.com/shihonoda/swe_intern_test/blob/main/test_fragmented_message.html)) to the dataURL you got.
 5. Open [test_fragmented_message.html](https://github.com/shihonoda/swe_intern_test/blob/main/test_fragmented_message.html) on your browser.
 6. If the server succeeded to receive all of the data, the picture will appear on the browser page.
 7. You can check the log on the console of DevTools.
