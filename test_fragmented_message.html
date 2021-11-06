@@ -1,0 +1,75 @@
+<img src="" height="200" alt="No image ...">
+<script>
+  function SEND(ws, command) {
+    ws.send(JSON.stringify(command));
+    return new Promise(resolve => {
+      ws.addEventListener('message', function(text) {
+        const response = JSON.parse(text.data);
+        if (response.id === command.id) {
+          ws.removeEventListener('message', arguments.callee);
+          resolve(response);
+        }
+      });
+    });
+  }
+  (async () => {
+    // Please rewrite the URL according to your browser's.
+    const ws = new WebSocket('ws://127.0.0.1:9222/devtools/browser/5dccdda8-d321-4ce5-b822-e3124da7a73f');
+    console.log('connected!');
+
+
+    async function SendsCommands() {
+      const targetsResponse = await SEND(ws, {
+          id: 1000,
+          method: 'Target.getTargets',
+      });
+      console.log('SendsCommands');
+      const pageTarget = targetsResponse.result.targetInfos.find(info => info.type === 'page');
+
+      // Attach to the page target.
+      const sessionId = (await SEND(ws, {
+          id: 1001,
+          method: 'Target.attachToTarget',
+          params: {
+          targetId: pageTarget.targetId,
+          flatten: true,
+          },
+      })).result.sessionId;
+      console.log('Get sessionId');
+
+      const documentId = (await SEND(ws, {
+          sessionId: sessionId,
+          id: 1002,
+          method: 'DOM.getDocument',
+      })).result.root.nodeId;
+      console.log('documentId: ',documentId);
+
+      const imgId = (await SEND(ws, {
+          sessionId: sessionId,
+          id: 1003,
+          method: 'DOM.querySelector',
+          params: {
+            nodeId: documentId,
+            selector: 'img',
+          },
+      })).result.nodeId;
+      console.log('imgId: ',imgId);
+
+      await ws.send(JSON.stringify({
+          sessionId: sessionId,
+          id: 1004,
+          method: 'DOM.setAttributeValue',
+          params: {
+            nodeId: imgId,
+            name: 'src',
+            // Change this value to any dataURL.
+            value: 'data:image/gif;base64,R0lGODlhAQABAPAAAP8AAAAAACH5BAQAAAAALAAAAAABAAEAAAICRAEAOw==',
+          },
+      }));
+      console.log("SendsCommands is OK.");
+    }
+    ws.onopen = SendsCommands;
+    ws.onmessage = event => console.log(event.data);
+  })();
+
+</script>
